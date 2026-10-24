@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TopBins | Football Compilations</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+  <!-- NAV -->
+  <header class="nav">
+    <a href="#" class="logo"><span class="ball">⚽</span> TOP<span>BINS</span></a>
+    <nav>
+      <a href="#compilations">Compilations</a>
+      <a href="#about">About</a>
+    </nav>
+  </header>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="pitch-lines" aria-hidden="true">
+      <div class="centre-circle"></div>
+      <div class="halfway"></div>
+    </div>
+    <div class="hero-content">
+      <p class="eyebrow">The beautiful game, on repeat</p>
+      <h1>Goals. Skills.<br><span>Pure Magic.</span></h1>
+      <p class="lead">Hand-picked football compilations — screamers, nutmegs, last-minute winners and the saves that defied physics.</p>
+      <div class="hero-actions">
+        <a href="#compilations" class="btn btn-primary">Watch now</a>
+        <span class="stat"><strong>{{ videos|length }}</strong> compilations</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- COMPILATIONS -->
+  <main id="compilations" class="section">
+    <div class="section-head">
+      <h2>Compilations</h2>
+      <input type="search" id="search" placeholder="Search compilations…" aria-label="Search compilations">
+    </div>
+
+    {% if categories %}
+    <div class="filters" role="tablist">
+      <button class="chip active" data-filter="all">All</button>
+      {% for cat in categories %}
+      <button class="chip" data-filter="{{ cat }}">{{ cat }}</button>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    {% if videos %}
+    <div class="grid" id="grid">
+      {% for v in videos %}
+      <article class="card" data-category="{{ v.category }}" data-title="{{ v.title|lower }}"
+               data-src="{{ url_for('static', filename=v.src) }}" data-name="{{ v.title }}"
+               tabindex="0">
+        <div class="thumb" {% if v.thumbnail %}style="background-image:url('{{ url_for('static', filename=v.thumbnail) }}')"{% endif %}>
+          {% if not v.thumbnail %}<span class="thumb-icon">⚽</span>{% endif %}
+          <span class="play">▶</span>
+          <span class="badge">{{ v.category }}</span>
+        </div>
+        <div class="card-body">
+          <h3>{{ v.title }}</h3>
+          <p>{{ v.size_mb }} MB</p>
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+    <p class="no-results" id="no-results" hidden>No compilations match your search.</p>
+    {% else %}
+    <div class="empty">
+      <div class="empty-icon">🥅</div>
+      <h3>No compilations yet</h3>
+      <p>Drop video files into <code>static/videos/</code> and refresh.</p>
+      <p>Use sub-folders for categories, e.g. <code>static/videos/goals/</code> or <code>static/videos/skills/</code>.</p>
+    </div>
+    {% endif %}
+  </main>
+
+  <!-- ABOUT -->
+  <section id="about" class="section about">
+    <h2>About</h2>
+    <p>TopBins is a home for the moments that make football special. Every clip is a reminder of why we fell in love with the game.</p>
+  </section>
+
+  <footer class="footer">
+    <p>© TopBins · Built with Flask</p>
+  </footer>
+
+  <!-- VIDEO MODAL -->
+  <div class="modal" id="modal" hidden>
+    <div class="modal-backdrop" data-close></div>
+    <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+      <button class="modal-close" data-close aria-label="Close">✕</button>
+      <video id="player" controls playsinline></video>
+      <h3 id="modal-title"></h3>
+    </div>
+  </div>
+
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
